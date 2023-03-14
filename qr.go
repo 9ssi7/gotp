@@ -1,8 +1,8 @@
 package gotp
 
 import (
+	"fmt"
 	"net/url"
-	"strconv"
 )
 
 // QrConfig is the configuration for the GetQRCode function.
@@ -24,20 +24,13 @@ type QrConfig struct {
 // The QR code is a Google Chart.
 // The QR code is a PNG image.
 func GetQRCode(config QrConfig) string {
-	v := url.Values{}
-	v.Set("secret", config.Secret)
+	u := "otpauth://totp/" + config.AccountName
+	query := "?secret=" + url.QueryEscape(config.Secret)
 	if config.Issuer != "" {
-		v.Set("issuer", config.Issuer)
+		query = query + url.QueryEscape("&issuer="+config.Issuer)
 	}
-	v.Set("period", strconv.FormatUint(uint64(Config.Period), 10))
-	v.Set("algorithm", Config.Algorithm.String())
-	v.Set("digits", Config.Digits.String())
-	u := url.URL{
-		Scheme:   "otpauth",
-		Host:     "totp",
-		Path:     config.AccountName,
-		RawQuery: v.Encode(),
-	}
+	query = query + url.QueryEscape("&algorithm="+Config.Algorithm.String()+"&digits="+Config.Digits.String()+"&period="+fmt.Sprint(Config.Period))
+	u = u + query
 	baseUrl := "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl="
-	return baseUrl + u.String()
+	return baseUrl + u
 }
