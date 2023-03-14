@@ -1,43 +1,47 @@
 package gotp
 
 import (
+	"crypto/hmac"
+	"encoding/base32"
 	"fmt"
-	"math/rand"
+	"hash"
 )
 
-var (
-	CodeLength = 6
-	SecretSize = 16
-	Period     = 30
-	Algorithm  = "SHA1"
-	Digits     = "DECIMAL"
-	ValidChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567="
-)
-
-func CreateSecret() string {
-	validChars := []byte(ValidChars)
-	secret := make([]byte, SecretSize)
-	for i := 0; i < SecretSize; i++ {
-		secret[i] = validChars[rand.Intn(len(validChars))]
-	}
-	return string(secret)
+type config struct {
+	CodeLength    int
+	SecretSize    int
+	Period        int64
+	Algorithm     func() hash.Hash
+	AlgorithmName string
+	Digits        string
+	ValidChars    string
 }
 
-func GetCode() {}
-
-func Verify() {}
-
-type QrConfig struct {
-	Secret      string
-	Issuer      string
-	AccountName string
+func getCode(secret string, time int64) (string, error) {
+	secretBytes, err := base32Decode(secret)
+	if err != nil {
+		return "", err
+	}
+	timeBytes := make([]byte, 8)
+	for i := 0; i < 8; i++ {
+		timeBytes[i] = byte(time >> uint(8*(7-i)) & 0xff)
+	}
+	hash := createHash(secretBytes, timeBytes)
+	offset := hash[len(hash)-1] & 0xf
+	truncatedHash := hash[offset : offset+4]
+	truncatedHash[0] = truncatedHash[0] & 0x7f
+	code := int(truncatedHash[0])<<24 | int(truncatedHash[1])<<16 | int(truncatedHash[2])<<8 | int(truncatedHash[3])
+	code = code % int(1e6)
+	return fmt.Sprintf("%06d", code), nil
 }
 
-func GetQRCode(config QrConfig) string {
-	url := "otpauth://totp/" + config.AccountName + "?secret=" + config.Secret
-	if config.Issuer != "" {
-		url += "&issuer=" + config.Issuer
-	}
-	url += "&algorithm=" + Algorithm + "&digits=" + Digits + "&period=" + fmt.Sprint(Period)
-	return "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=" + url
+func base32Decode(secret string) ([]byte, error) {
+	secret = secret[:len(secret)-len(secret)%8]
+	return base32.StdEncoding.DecodeString(secret)
+}
+
+func createHash(key, message []byte) []byte {
+	mac := hmac.New(Config.Algorithm, key)
+	mac.Write(message)
+	return mac.Sum(nil)
 }
