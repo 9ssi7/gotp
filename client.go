@@ -4,17 +4,14 @@ import (
 	"crypto/hmac"
 	"encoding/base32"
 	"fmt"
-	"hash"
 )
 
 type config struct {
-	CodeLength    int
-	SecretSize    int
-	Period        int64
-	Algorithm     func() hash.Hash
-	AlgorithmName string
-	Digits        string
-	ValidChars    string
+	Digits     Digits
+	Algorithm  Algorithm
+	SecretSize int
+	Period     int64
+	ValidChars string
 }
 
 func getCode(secret string, time int64) (string, error) {
@@ -41,7 +38,7 @@ func base32Decode(secret string) ([]byte, error) {
 }
 
 func createHash(key, message []byte) []byte {
-	mac := hmac.New(Config.Algorithm, key)
+	mac := hmac.New(Config.Algorithm.Hash(), key)
 	mac.Write(message)
 	return mac.Sum(nil)
 }
