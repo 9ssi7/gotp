@@ -27,7 +27,7 @@ This will give you a boolean value. Then you can run the logic you want.
 ## Installation
 
 ```bash
-go get github.com/ssibrahimbas/gotp
+go get github.com/9ssi7/gotp
 ```
 
 ## Contributing
@@ -71,7 +71,7 @@ Variables have parameters that are used when generating, decoding, and validatin
 Digits is the number of digits in the code. It must be between 6 and 8. The default is 6.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 gotp.Digits = gotp.DigitsEight
 ```
@@ -81,7 +81,7 @@ gotp.Digits = gotp.DigitsEight
 Algorithm is the algorithm used to generate the code. The default is SHA1.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 gotp.Algorithm = gotp.AlgorithmSHA256
 gotp.Algorithm = gotp.AlgorithmSHA512
@@ -92,7 +92,7 @@ gotp.Algorithm = gotp.AlgorithmSHA512
 SecretSize is the size of the secret key in bytes. The default is 10.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 gotp.SecretSize = 20
 ```
@@ -102,7 +102,7 @@ gotp.SecretSize = 20
 Period is the time step in seconds. The default is 30.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 gotp.Period = 60
 ```
@@ -112,7 +112,7 @@ gotp.Period = 60
 ValidChars is the set of characters that are used to generate the secret key. The default is "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 gotp.ValidChars = "0123456789"
 ```
@@ -126,7 +126,7 @@ Functions are used to generate, decode, and validate code.
 CreateSecret creates a secret key. The secret key is a random string of bytes. The secret key is usually stored in the user's mobile device.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 secret := gotp.CreateSecret()
 ```
@@ -136,7 +136,7 @@ secret := gotp.CreateSecret()
 GetCode generates a one-time password. The one-time password is usually displayed to the user as a 6-digit number.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 code := gotp.GetCode("secret", 0)
 ```
@@ -146,7 +146,7 @@ code := gotp.GetCode("secret", 0)
 GetTime returns the current time in seconds.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 time := gotp.GetTime()
 ```
@@ -156,7 +156,7 @@ time := gotp.GetTime()
 Verify verifies a one-time password. The one-time password is usually entered by the user.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 valid := gotp.Verify(gotp.VerifyConfig{
     Secret: "secret",
@@ -169,7 +169,7 @@ valid := gotp.Verify(gotp.VerifyConfig{
 GetQRCode generates a qr code with secret key and some customizable data.
 
 ```go
-import "github.com/ssibrahimbas/gotp"
+import "github.com/9ssi7/gotp"
 
 qr := gotp.GetQRCode(gotp.QrConfig{
     Secret: "secret",

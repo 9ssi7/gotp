@@ -1,3 +1,3 @@
-module github.com/ssibrahimbas/gotp
+module github.com/9ssi7/gotp
 
-go 1.20
+go 1.23
